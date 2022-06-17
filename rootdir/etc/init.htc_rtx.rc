@@ -1,0 +1,87 @@
+import init.qcom.rc
+import /vendor/etc/init/hw/init.qcom.rc
+import /vendor/etc/init/hw/init.htc.common.rc
+import /vendor/etc/init/hw/init.htc.usb.configfs.rc
+import init.htc.storage.exfat.rc
+
+on init
+    setprop sys.usb.controller "a600000.dwc3"
+    setprop sys.usb.ffs.aio_compat true
+
+    # Accel input nodes
+    chown system input /dev/input/event0
+    chown system input /dev/input/event1
+    chown system input /dev/input/event2
+    chown system input /dev/input/event3
+    chown system input /dev/input/event4
+    chown system input /dev/input/event5
+    chmod 0660 /dev/input/event0
+    chmod 0660 /dev/input/event1
+    chmod 0660 /dev/input/event2
+    chmod 0660 /dev/input/event3
+    chmod 0660 /dev/input/event4
+    chmod 0660 /dev/input/event5
+
+    # HTC SSD Peripheral Fan
+    chown system system /sys/class/htc_fan/max31760/power_control
+    chown system system /sys/class/htc_fan/max31760/pwm_control
+    chown system system /sys/class/htc_fan/max31760/thermal_flag
+    chown media  audio  /sys/class/htc_fan/max31760/sound_trigger_flag
+
+    write /sys/bus/i2c/devices/3-0038/fts_upgrade_bin "focaltech_all.bin 1"
+
+on early-boot
+    write /sys/devices/platform/soc/soc:qcom,dsi-display-primary/bl_cali_scale 2
+    write /sys/devices/platform/soc/soc:qcom,dsi-display-primary/gamma_calibration 2
+
+# Security - Tamper Detection - BEGIN
+service tpd_daemon /system/bin/tpd_daemon
+    class core
+    user root
+# Security - Tamper Detection - END
+
+# SSD_RIL - BEGIN
+# log level control
+on property:persist.sys.htcdebugflag=1
+    setprop persist.log.tag.QC-NETMGR-LIB V
+    setprop persist.log.tag.RILQ V
+    setprop persist.log.tag.QMI_FW V
+    setprop persist.log.tag.RILJ V
+    setprop persist.log.tag.Diag_Lib V
+    setprop persist.log.tag.QC-QDI-LIB V
+
+on property:persist.sys.htcdebugflag=0
+    setprop persist.log.tag.QC-NETMGR-LIB W
+    setprop persist.log.tag.RILQ W
+    setprop persist.log.tag.QMI_FW W
+    setprop persist.log.tag.RILJ W
+    setprop persist.log.tag.Diag_Lib W
+    setprop persist.log.tag.QC-QDI-LIB W
+# RIL - END
+
+# SSD_NETWORK - BEGIN
+# log level control
+on property:persist.sys.htcdebugflag=1
+    setprop persist.log.tag.dnsmasq V
+    setprop persist.log.tag.Netd V
+    setprop persist.log.tag.NetdConnector V
+    setprop persist.log.tag.IptablesRestoreController V
+    setprop persist.log.tag.BandwidthController V
+    setprop persist.log.tag.NetUtilsWrapper V
+    setprop persist.log.tag.iptables V
+    setprop persist.log.tag.ip6tables V
+    setprop persist.log.tag.SocketListener V
+    setprop persist.log.tag.FrameworkListener V
+
+on property:persist.sys.htcdebugflag=0
+    setprop persist.log.tag.dnsmasq W
+    setprop persist.log.tag.Netd W
+    setprop persist.log.tag.NetdConnector W
+    setprop persist.log.tag.IptablesRestoreController W
+    setprop persist.log.tag.BandwidthController W
+    setprop persist.log.tag.NetUtilsWrapper W
+    setprop persist.log.tag.iptables W
+    setprop persist.log.tag.ip6tables W
+    setprop persist.log.tag.SocketListener W
+    setprop persist.log.tag.FrameworkListener W
+# NETWORK - END
