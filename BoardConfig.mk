@@ -85,12 +85,10 @@ VENDOR_SECURITY_PATCH := 2021-08-01
 # VINTF
 DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
 
-# TWRP Configuration
-TW_THEME := landscape_hdpi
-TW_EXTRA_LANGUAGES := true
-TW_SCREEN_BLANK_ON_BOOT := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_USE_TOOLBOX := true
-
 # Inherit the proprietary files
 include vendor/htc/htc_rtx/BoardConfigVendor.mk
+
+# TWRP (optional)
+ifeq ($(WITH_TWRP),true)
+-include $(DEVICE_PATH)/twrp.mk
+endif
